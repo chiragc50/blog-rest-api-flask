@@ -1,202 +1,208 @@
----
+# 🚀 Flask Blog API (Educational Project)
 
-```markdown
-# Flask REST API for Blog Posts
+## 📌 Overview
+This is a **fully self-designed and self-developed REST API project** built using Flask.  
+The purpose of this project is to **demonstrate my backend development skills, API design knowledge, and understanding of authentication & security concepts**.
 
-This project is a **RESTful API** built using **Flask**, designed for educational to demonstrate backend development skills. It includes user authentication, CRUD operations for blog posts, and token revocation with rate limiting and schema validation.
-
----
-
-## 🚀 Features
-
-- **User authentication (signup/login/logout)**
-- **JWT-based access control**
-- **Rate limiting** via Flask-Limiter
-- **Role-based post access (public/private)**
-- **Schema validation** with Marshmallow
-- **Database migrations** using Flask-Migrate
-- **Secure password hashing** via Passlib
-- **OpenAPI documentation** with Flask-Smorest
-- **Dockerized** for production deployment
-- **Gunicorn-ready** for WSGI hosting
+This project is purely **educational** and was created to showcase my capabilities to potential employers.
 
 ---
 
-## 🧠 Tech Stack
-
-- **Flask**
-- **Flask-SQLAlchemy**
-- **Flask-JWT-Extended**
-- **Flask-Smorest**
-- **Flask-Limiter**
-- **Marshmallow**
-- **Passlib**
-- **Gunicorn**
-- **PostgreSQL (or any SQL DB)**
-- **Docker**
+## 🧠 Key Highlights
+- Designed and implemented **from scratch**
+- Clean and structured **RESTful API architecture**
+- Implements **JWT Authentication**
+- Secure password hashing using `pbkdf2_sha256`
+- Token revocation (logout mechanism)
+- Pagination and filtering support
+- Rate limiting for API protection
+- Modular and scalable code structure
 
 ---
 
-## 📁 Project Structure
+## ⚙️ Tech Stack
+- **Backend:** Flask  
+- **Database:** SQLAlchemy ORM  
+- **Authentication:** JWT (Flask-JWT-Extended)  
+- **Validation:** Marshmallow  
+- **Migrations:** Flask-Migrate  
+- **Rate Limiting:** Flask-Limiter  
+- **API Docs:** Swagger UI (OpenAPI)
 
+---
+
+## 🗂️ Project Structure
 ```
-
-.
+blog-rest-api-flask/
+│
 ├── api/
-│   ├── **init**.py
-│   ├── db.py
-│   ├── extensions.py
-│   ├── models/
-│   │   ├── User.py
-│   │   ├── Post.py
-│   │   └── RevokedToken.py
-│   ├── resources/
-│   │   ├── users.py
-│   │   └── posts.py
-│   └── schemas/
-│       ├── user_schema.py
-│       └── post_schema.py
-├── requirements.txt
+│ ├── models/
+│ │ ├── User.py
+│ │ ├── Post.py
+│ │ └── RevokedToken.py
+│ │
+│ ├── resources/
+│ │ ├── users.py
+│ │ └── posts.py
+│ │
+│ ├── schemas/
+│ │ ├── user_schema.py
+│ │ └── post_schema.py
+│ │
+│ ├── db.py
+│ ├── extensions.py
+│ └── init.py
+│
+├── .dockerignore
+├── .env.example
+├── .flaskenv
+├── .gitignore
 ├── Dockerfile
+├── LICENSE
 ├── README.md
-└── .env
-
+└── requirements.txt
 ```
 
 ---
 
-## 📦 Installation
+## 🔐 Authentication Flow
+- User Signup → Create account  
+- User Login → Receive JWT token  
+- Protected Routes → Require JWT  
+- Logout → Token gets revoked and stored  
 
-### 🔧 Prerequisites
+---
 
-- Python 3.10+
-- PostgreSQL or compatible SQL database
-- [Docker](https://www.docker.com/) (for containerized deployment)
-- `pip`, `virtualenv` or `venv`
+# Example:
+- Login returns access token
+- Token is required in headers for protected enpoints
 
-### 🧪 Local Development Setup
+---
 
-1. **Clone the repository**:
+## 📡 API Features
 
+### 👤 User Endpoints
+- `POST /api/v1/users/signup` → Register user  
+- `POST /api/v1/users/login` → Authenticate user  
+- `POST /api/v1/users/logout` → Revoke token  
+
+### 📝 Post Endpoints
+- `GET /api/v1/posts/` → Get posts (with pagination & filters)  
+- `POST /api/v1/posts/` → Create post  
+- `GET /api/v1/posts/<id>` → Get single post  
+- `PUT /api/v1/posts/<id>` → Update post  
+- `DELETE /api/v1/posts/<id>` → Delete post  
+
+---
+
+## Core Implementation Details
+# Models
+- User model with relationship to posts `User`
+- Post model with privacy control and timestamps `Post`
+- Revoked token model for logout security `RevokedToken`
+
+# API Logic
+- Post filtering and pagination implemented in routes `posts`
+- Authentication and token handling logic `users`
+
+# Schemas
+- Input validation using marshmallow
+
+# App Configuration
+- Modular app factory pattern used `__init__`
+- Extensions initialized seperately for scalability `extensions`
+
+---
+## 🛡️ Security Features
+- Password hashing (no plain-text storage)
+- JWT-based authentication
+- Token revocation (blacklisting)
+- Rate limiting to prevent abuse
+- Input validation for all endpoints
+
+---
+
+## 🚀 How to Run
+
+### 1. Clone Repository
 ```bash
-git clone https://https://github.com/chiragsd94/Flask-Blog-RestApi.git
+git clone https://github.com/chiragc50/blog-rest-api-flask.git
+cd blog-rest-api-flask
 ```
 
-cd Flask-Blog-RestApi
-
-````
-
-2. **Create a virtual environment**:
-
+### 2. Create Virtual Environment
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+python -m venv venv
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
 ```
 
-3. **Install dependencies**:
-
+### 3. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Configure environment**:
-
+### 4. Environment Variables
 Create a `.env` file:
-
-```env
-DATABASE_URL=sqlite:///data.db  # or your Postgres URL
-SECRET_KEY=your-secret
-JWT_SECRET_KEY=your-jwt-secret
+```
+DATABASE_URL=your_database_url
+SECRET_KEY=your_secret_key
+JWT_SECRET_KEY=your_jwt_secret
 ```
 
-5. **Run database migrations**:
-
+### 5. Run Migrations
 ```bash
 flask db init
-flask db migrate -m "Initial migration"
+flask db migrate
 flask db upgrade
 ```
 
-6. **Run the application**:
-
+### 6. Run Server
 ```bash
 flask run
 ```
 
-The API will be available at `http://localhost:5000`.
-
 ---
 
-## 🐳 Docker Deployment
-
-1. **Build Docker image**:
-
-```bash
-docker build -t blog-api .
+## 📖 API Documentation
+Swagger UI available at:
 ```
-
-2. **Run the container**:
-
-```bash
-docker run -d -p 80:5000 --env-file .env blog-api
-```
-
-> The API will now be available at `http://localhost`.
-
----
-
-## 🧪 Example Endpoints
-
-### 🔐 User Authentication
-
-* **Signup**: `POST /api/v1/users/signup`
-* **Login**: `POST /api/v1/users/login`
-* **Logout**: `POST /api/v1/users/logout` (Requires JWT)
-
-### 📝 Posts
-
-* **Create Post**: `POST /api/v1/posts/` *(JWT required)*
-* **Get Posts**: `GET /api/v1/posts/?is_private=true/false&page=1` *(JWT required)*
-* **Get Post**: `GET /api/v1/posts/<post_id>` *(JWT required)*
-* **Update Post**: `PUT /api/v1/posts/<post_id>` *(JWT required)*
-* **Delete Post**: `DELETE /api/v1/posts/<post_id>` *(JWT required)*
-
----
-
-## 📚 API Documentation
-
-Once the app is running, OpenAPI (Swagger UI) is available at:
-
-```
-http://localhost:5000/swagger-ui
+/swagger-ui
 ```
 
 ---
 
-## 🛡 Disclaimer
+## ⚠️ Disclaimer
+This project is developed **entirely by me for educational and portfolio purposes**.  
+It is intended to demonstrate backend development, API design, and security concepts.
 
-> This project is built for **educational purposes only** and to showcase my backend development skills to potential employers.
-> I do not claim ownership over any external libraries or dependencies used in this project.
->**I am not liable for any loss, damage, data breach, misuse, or legal consequences resulting from the use, deployment, or modification of this code. Use this project at your own risk.**
-> **This API is not intended for production use without further security audits and testing.**
+This project is **not production-ready** and should not be used in real-world applications without proper security reviews, testing, and improvements.
 
----
+This software is provided **"as is"**, without any warranties of any kind, express or implied.
+I am **not liable for any misuse, damage, data loss, or security vulnerabilities, or other issues** arising from the use of this project.
 
-## 👨‍💻 Author
-
-**Chirag SD**
-GitHub: \chiragsd94
-Email: \[[s.chirag.danavendra@gmail.com](mailto:s.chirag.danavendra@gmail.com)]
+Any use of this project is done **at your own risk**.
 
 ---
 
-## 📃 License
-
-This project is provided **as-is** without any warranty. All rights belong to their respective owners. You're free to fork, modify, or use it for learning.
-
-```
+## License
+- This project is licensed under the **MIT License**.
+- See the `LICENSE` file for more details
 
 ---
 
-```
-````
+
+## 📌 Copyright & Usage
+- This project intended for educational and portfolio purposes. 
+- Feel free to explore, use and learn from the code 
+
+- This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+---
+
+## 🎯 Purpose
+This project reflects my ability to:
+- Design real-world APIs  
+- Implement authentication and security  
+- Write clean, maintainable backend code  
+- Understand scalable architecture  
